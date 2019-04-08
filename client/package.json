@@ -1,0 +1,40 @@
+{
+  "name": "lisi-client",
+  "version": "0.0.1",
+  "description": "A read it later web-extention",
+  "scripts": {
+    "start": "npm run dev",
+    "build": "webpack && npm run lint",
+    "dev": "webpack --watch",
+    "web-ext": "web-ext run",
+    "lint": "web-ext lint",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Oli",
+  "license": "ISC",
+  "devDependencies": {
+    "clean-webpack-plugin": "^1.0.1",
+    "copy-webpack-plugin": "^4.6.0",
+    "cross-env": "^5.2.0",
+    "html-webpack-plugin": "^3.2.0",
+    "mithril": "^2.0.0-rc.4",
+    "web-ext": "^3.0.0",
+    "web-ext-webpack-plugin": "github:hiikezoe/web-ext-webpack-plugin",
+    "webpack": "^4.29.6",
+    "webpack-cli": "^3.3.0",
+    "webpack-shell-plugin": "^0.5.0"
+  },
+  "webExt": {
+    "sourceDir": "dist",
+    "run": {
+      "firefox": "firefoxdeveloperedition",
+      "browserConsole": true
+    }
+  },
+  "dependencies": {
+    "express": "^4.16.4",
+    "http-status": "^1.3.2",
+    "validate.js": "^0.12.0",
+    "validator": "^10.11.0"
+  }
+}

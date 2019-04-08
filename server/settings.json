@@ -1,0 +1,21 @@
+{
+  "security": {
+    "hmacAlgorithm": "sha256",
+    "bcryptCost": 12
+  },
+  "database": {
+    "development": {
+      "storage": "lisi-dev.db",
+      "dialect": "sqlite"
+    },
+    "test": {
+      "storage": "lisi-test.db",
+      "dialect": "sqlite",
+      "logging": false
+    },
+    "production": {
+      "storage": "lisi.db",
+      "dialect": "sqlite"
+    }
+  }
+}

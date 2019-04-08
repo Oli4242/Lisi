@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8">
+    <style media="screen">
+      :root {
+        --base-space: 0.5rem;
+        --small-space: 0.3rem;
+      }
+
+      body {
+        font-family: sans-serif;
+        box-sizing: border-box;
+        margin: var(--small-space);
+        width: 400px;
+      }
+
+      *, *:before, *:after {
+        box-sizing: inherit;
+      }
+
+      h1 {
+        color: green;
+        margin: var(--base-space);
+      }
+
+      h1 small,
+      h2 small,
+      h3 small,
+      h4 small,
+      h5 small,
+      h6 small {
+        color: grey;
+        font-size: 0.6em;
+      }
+
+      input,
+      button,
+      textarea {
+        padding: var(--base-space);
+        display: inline;
+        width: 100%;
+        font-family: inherit;
+        font-size: inherit;
+      }
+
+      .errors {
+        font-family: sans-serif;
+        color: red;
+        font-size: 0.9rem;
+        border: 1px solid red;
+        padding: var(--small-space);
+        margin: 1px;
+      }
+    </style>
+  </head>
+  <body>
+  </body>
+</html>

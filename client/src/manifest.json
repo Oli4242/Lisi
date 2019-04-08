@@ -1,0 +1,20 @@
+{
+  "manifest_version": 2,
+  "name": "Lisi",
+  "description": "A read it later web-extention",
+  "version": "0.0.1",
+  "icons": {
+    "64": "icon.png"
+  },
+  "permissions": [
+    "storage",
+    "<all_urls>"
+  ],
+  "browser_action": {
+    "default_icon": {
+      "64": "icon.png"
+    },
+    "default_popup": "browser_action.html",
+    "default_title": "Lisi"
+  }
+}

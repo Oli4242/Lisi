@@ -1,0 +1,33 @@
+{
+  "name": "lisi-server",
+  "version": "0.0.1",
+  "description": "A read it later server",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js",
+    "drop-test": "rimraf lisi-test.db",
+    "migrate-test": "sequelize db:migrate --env test",
+    "test": "cross-env NODE_ENV=test mocha tests --timeout 2500",
+    "retest": "npm run drop-test && npm run migrate-test && npm test"
+  },
+  "author": "Oli",
+  "license": "ISC",
+  "devDependencies": {
+    "chai": "^4.2.0",
+    "chai-as-promised": "^7.1.1",
+    "chai-change": "^2.1.2",
+    "chai-http": "^4.2.1",
+    "cross-env": "^5.2.0",
+    "mocha": "^5.2.0",
+    "rimraf": "^2.6.3"
+  },
+  "dependencies": {
+    "bcrypt": "^3.0.4",
+    "buffer-equal-constant-time": "^1.0.1",
+    "express": "^4.16.4",
+    "is-bcrypt": "^0.3.1",
+    "sequelize": "^4.42.0",
+    "sequelize-cli": "^5.4.0",
+    "sqlite3": "^4.0.6"
+  }
+}

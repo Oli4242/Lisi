@@ -37,8 +37,8 @@ export default class LogInUI {
           disabled: this.isPending
         }),
         m('button[style=width:50%]', {
-          onclick: () => this.signInAction()
-        }, 'Sign-in'),
+          onclick: () => this.signUpAction()
+        }, 'Sign up'),
         m('button[style=width:50%]', {
           disabled: this.isPending,
           onclick: () => this.logInAction()
@@ -47,8 +47,8 @@ export default class LogInUI {
     ]
   }
 
-  signInAction() {
-    m.route.set('/sign-in')
+  signUpAction() {
+    m.route.set('/sign-up')
   }
 
   async logInAction() { // TODO: redirect to log-in on success

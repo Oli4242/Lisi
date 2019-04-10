@@ -1,7 +1,7 @@
 import m from 'mithril'
 import Authentication from '../models/authentication'
 
-export default class SignInUI {
+export default class SignUpUI {
   oninit() {
     Authentication.load()
     this.password = null
@@ -13,9 +13,9 @@ export default class SignInUI {
     return [
       m('h1', [
         'Lisi',
-        m('small', ' › Sign in')
+        m('small', ' › Sign up')
       ]),
-      Authentication.error && m('pre.errors', Authentication.SignInErrorText),
+      Authentication.error && m('pre.errors', Authentication.SignUpErrorText),
       m('input[placeholder=username]', { // TODO: write an helper or a component to dry this
         oninput: e => Authentication.username = e.target.value,
         value: Authentication.username,
@@ -40,23 +40,23 @@ export default class SignInUI {
         onclick: () => this.logInAction()
       }, '‹ Back'),
       m('button[style=width:50%]', {
-        onclick: () => this.signInAction(),
+        onclick: () => this.signUpAction(),
         disabled: this.isPending
-      }, 'Sign in!'),
+      }, 'Sign up!'),
     ]
   }
 
   logInAction() {
-    m.route.set('/login')
+    m.route.set('/log-in')
   }
 
-  async signInAction() {
+  async signUpAction() {
     this.isPending = true
     m.redraw()
 
-    await Authentication.signIn(this.password, this.passwordConfirmation)
+    await Authentication.signUp(this.password, this.passwordConfirmation)
     if (!Authentication.error)
-      m.route.set('/login')
+      m.route.set('/log-in')
 
     this.isPending = false
     m.redraw()

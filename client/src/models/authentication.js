@@ -39,9 +39,9 @@ export default {
     return !!(this.id && this.secret && this.server)
   },
 
-  async signIn(password, passwordConfirmation) {
+  async signUp(password, passwordConfirmation) {
     this.error = null
-    this.validateSignIn(password, passwordConfirmation)
+    this.validateSignUp(password, passwordConfirmation)
     if (this.error)
       return
 
@@ -95,7 +95,7 @@ export default {
     }
   },
 
-  validateSignIn(password, passwordConfirmation) {
+  validateSignUp(password, passwordConfirmation) {
     const errors = []
 
     if (!validator.isLength(this.username || '', { min: 3 })) // TODO: trim username? I should do it serverside too
@@ -128,7 +128,7 @@ export default {
     this.error = errors.length > 0 ? errors : null
   },
 
-  get SignInErrorText() { // TODO: find a way to DRY validation & error code
+  get SignUpErrorText() { // TODO: find a way to DRY validation & error code
     if (Array.isArray(this.error))
       return this.error.join('\n')
 
@@ -171,5 +171,5 @@ function formatUrl(uncheckedUrl) {
 }
 
 // TODO: test the models / switch to TDD
-// TODO: when the user closes the browser_action page during a request, the response is never processed, maybe I should use a background script for important tasks like sign-in / log-in etc. Maybe the whole model layer could run in a background script?
+// TODO: when the user closes the browser_action page during a request, the response is never processed, maybe I should use a background script for important tasks like sign-up / log-in etc. Maybe the whole model layer could run in a background script?
 // TODO: logOut

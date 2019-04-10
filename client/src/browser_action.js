@@ -1,6 +1,6 @@
 import m from 'mithril'
-import LoginUI from './components/log-in'
-import SignInUI from './components/sign-in'
+import LogInUI from './components/log-in'
+import SignUpUI from './components/sign-up'
 import MainUI from './components/main'
 import Authentication from './models/authentication'
 
@@ -11,9 +11,9 @@ import Authentication from './models/authentication'
 ;(async () => {
   await Authentication.load()
 
-  m.route(document.body, Authentication.isAuthenticated ? '/main' : '/login' , {
-    '/login': LoginUI,
-    '/sign-in': SignInUI,
+  m.route(document.body, Authentication.isAuthenticated ? '/main' : '/log-in' , {
+    '/log-in': LogInUI,
+    '/sign-up': SignUpUI,
     '/main': MainUI,
   })
 })()

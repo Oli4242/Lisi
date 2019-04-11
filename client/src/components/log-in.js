@@ -17,9 +17,6 @@ export default class LogInUI {
         'Lisi',
         m('small', ' › Log in')
       ]),
-      // m('button[style=font-size:0.7rem;width:10%;position:absolute;top:0.5rem;right:0.3rem;]', '☰'),
-      // m('button[style=font-size:1rem;width:10%;position:absolute;top:0.5rem;right:0.3rem;]', '⚙'),
-      // TODO: qu'on puisse appuyer sur entrer pour valider (farie un form)
       m(Form, {
         defaultAction: () => this.logInAction()
       }, [
@@ -54,7 +51,7 @@ export default class LogInUI {
     m.route.set('/sign-up')
   }
 
-  async logInAction() { // TODO: redirect to log-in on success
+  async logInAction() {
     this.isPending = true
     m.redraw()
 
@@ -66,6 +63,3 @@ export default class LogInUI {
     m.redraw()
   }
 }
-
-// TODO: feedback -> loading + success/error messages
-// TODO: client-side validation

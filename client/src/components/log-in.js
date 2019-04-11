@@ -1,6 +1,7 @@
 import m from 'mithril'
 import httpStatus from 'http-status'
 import Authentication from '../models/authentication'
+import Form from './form'
 
 export default class LogInUI {
   oninit() {
@@ -19,7 +20,9 @@ export default class LogInUI {
       // m('button[style=font-size:0.7rem;width:10%;position:absolute;top:0.5rem;right:0.3rem;]', '☰'),
       // m('button[style=font-size:1rem;width:10%;position:absolute;top:0.5rem;right:0.3rem;]', '⚙'),
       // TODO: qu'on puisse appuyer sur entrer pour valider (farie un form)
-      m('form', [
+      m(Form, {
+        defaultAction: () => this.logInAction()
+      }, [
         Authentication.error && m('pre.errors', Authentication.logInErrorText),
         m('input[placeholder=username]', { // TODO: write an helper or a component to dry this
           oninput: e => Authentication.username = e.target.value,

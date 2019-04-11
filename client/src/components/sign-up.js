@@ -1,5 +1,6 @@
 import m from 'mithril'
 import Authentication from '../models/authentication'
+import Form from './form'
 
 export default class SignUpUI {
   oninit() {
@@ -15,34 +16,38 @@ export default class SignUpUI {
         'Lisi',
         m('small', ' › Sign up')
       ]),
-      Authentication.error && m('pre.errors', Authentication.SignUpErrorText),
-      m('input[placeholder=username]', { // TODO: write an helper or a component to dry this
-        oninput: e => Authentication.username = e.target.value,
-        value: Authentication.username,
-        disabled: this.isPending
-      }),
-      m('input[type=password][placeholder=password]', {
-        oninput: e => this.password = e.target.value,
-        value: this.password,
-        disabled: this.isPending
-      }),
-      m('input[type=password][placeholder=repeat password]', {
-        oninput: e => this.passwordConfirmation = e.target.value,
-        value: this.passwordConfirmation,
-        disabled: this.isPending
-      }),
-      m('input[placeholder=server]', {
-        oninput: e => Authentication.server = e.target.value,
-        value: Authentication.server,
-        disabled: this.isPending
-      }),
-      m('button[style=width:50%]', {
-        onclick: () => this.logInAction()
-      }, '‹ Back'),
-      m('button[style=width:50%]', {
-        onclick: () => this.signUpAction(),
-        disabled: this.isPending
-      }, 'Sign up!'),
+      m(Form, {
+        defaultAction: () => this.signUpAction()
+      }, [
+        Authentication.error && m('pre.errors', Authentication.SignUpErrorText),
+        m('input[placeholder=username]', { // TODO: write an helper or a component to dry this
+          oninput: e => Authentication.username = e.target.value,
+          value: Authentication.username,
+          disabled: this.isPending
+        }),
+        m('input[type=password][placeholder=password]', {
+          oninput: e => this.password = e.target.value,
+          value: this.password,
+          disabled: this.isPending
+        }),
+        m('input[type=password][placeholder=repeat password]', {
+          oninput: e => this.passwordConfirmation = e.target.value,
+          value: this.passwordConfirmation,
+          disabled: this.isPending
+        }),
+        m('input[placeholder=server]', {
+          oninput: e => Authentication.server = e.target.value,
+          value: Authentication.server,
+          disabled: this.isPending
+        }),
+        m('button[style=width:50%]', {
+          onclick: () => this.logInAction()
+        }, '‹ Back'),
+        m('button[style=width:50%]', {
+          onclick: () => this.signUpAction(),
+          disabled: this.isPending
+        }, 'Sign up!'),
+      ])
     ]
   }
 

@@ -1,4 +1,5 @@
 import m from 'mithril'
+import Form from './form'
 
 export default class MainUI { // TODO: ajouter ouvrir en grand, recherche, etc.
   view() {
@@ -8,10 +9,14 @@ export default class MainUI { // TODO: ajouter ouvrir en grand, recherche, etc.
         'Lisi',
         m('small', ' › Save a link')
       ]),
-      m('input[placeholder=tags]'),
-      m('textarea[placeholder=notes]'),
-      m('button[style=width:50%]', { onclick: () => window.close() }, 'Cancel'),
-      m('button[style=width:50%]', { onclick: () => window.close() }, 'Save!'),
+      m(Form, {
+        defaultAction: () => window.close()
+      }, [
+        m('input[placeholder=tags]'),
+        m('textarea[placeholder=notes]'),
+        m('button[style=width:50%]', { onclick: () => window.close() }, 'Cancel'),
+        m('button[style=width:50%]', { onclick: () => window.close() }, 'Save!'),
+      ])
     ]
   }
 }

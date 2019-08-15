@@ -1,7 +1,8 @@
 const app = require('../../app')
-const { User, Link } = require('../../models')
+const { User } = require('../../models')
 const hmac = require('../../utils/hmac')
 const { randomBytes } = require('crypto')
+const authorizationFor = require('../../utils/tests-helpers/authorization-for')
 
 describe('/users', () => {
 // TODO: test secret? -> could mock/spy randomBytes with sinon.js or something?
@@ -166,14 +167,16 @@ describe('/users', () => {
 
     context('on happy path', () => {
       it('respond with status 200 (OK)', async () => {
-        const response = await request(app).get(`/users/${givenUser.id}`)
-          .set('Authorization', hmac(`GET\n/users/${givenUser.id}\n${JSON.stringify({})}`, givenUser.secret, 'base64'))
+        const url = `/users/${givenUser.id}`
+        const response = await request(app).get(url)
+          .set('Authorization', authorizationFor(givenUser, 'GET', url))
         expect(response).to.have.status(200)
       })
 
       it('sends the user id and username as json', async () => {
-        const response = await request(app).get(`/users/${givenUser.id}`)
-          .set('Authorization', hmac(`GET\n/users/${givenUser.id}\n${JSON.stringify({})}`, givenUser.secret, 'base64'))
+        const url = `/users/${givenUser.id}`
+        const response = await request(app).get(url)
+          .set('Authorization', authorizationFor(givenUser, 'GET', url))
         expect(response.body).to.deep.eql({
           id: givenUser.id,
           username: givenUser.username
@@ -189,14 +192,16 @@ describe('/users', () => {
     context('on sad path', () => {
       it('returns status 401 (Unauthorized) when user does not exists (no 404)', async () => {
         const badId = givenUser2.id + 1
-        const response = await request(app).get(`/users/${badId}`)
-          .set('Authorization', hmac(`GET\n/users/${badId}\n${JSON.stringify({})}`, givenUser.secret, 'base64'))
+        const url = `/users/${badId}`
+        const response = await request(app).get(url)
+          .set('Authorization', authorizationFor(givenUser, 'GET', url))
         expect(response).to.have.status(401)
       })
 
-      it('returns status 401 (Unauthorized) when asking for another user', async () => {
-        const response = await request(app).get(`/users/${givenUser.id}`)
-          .set('Authorization', hmac(`GET\n/users/${givenUser.id}\n${JSON.stringify({})}`, givenUser2.secret, 'base64'))
+        it('returns status 401 (Unauthorized) when asking for another user', async () => {
+        const url = `/users/${givenUser.id}`
+        const response = await request(app).get(url)
+          .set('Authorization', authorizationFor(givenUser2, 'GET', url))
         expect(response).to.have.status(401)
       })
     })
@@ -219,14 +224,16 @@ describe('/users', () => {
       })
 
       it('responds with status 200 (OK)', async () => {
-        const response = await request(app).delete(`/users/${givenUser.id}`)
-          .set('Authorization', hmac(`DELETE\n/users/${givenUser.id}\n${JSON.stringify({})}`, givenUser.secret, 'base64'))
+        const url = `/users/${givenUser.id}`
+        const response = await request(app).delete(url)
+          .set('Authorization', authorizationFor(givenUser, 'DELETE', url))
         expect(response).to.have.status(200)
       })
 
       it('deletes the user', () => {
-        const req = () => request(app).delete(`/users/${givenUser.id}`)
-          .set('Authorization', hmac(`DELETE\n/users/${givenUser.id}\n${JSON.stringify({})}`, givenUser.secret, 'base64'))
+        const url = `/users/${givenUser.id}`
+        const req = () => request(app).delete(url)
+          .set('Authorization', authorizationFor(givenUser, 'DELETE', url))
         return expect(req).to.alter(() => User.count(), { by: -1 })
       })
 
@@ -258,32 +265,36 @@ describe('/users', () => {
       it('returns status 401 (Unauthorized) when trying to delete another user', async () => {
         const deleter = givenUser
         const deletee = givenUser2
-        const response = await request(app).delete(`/users/${deletee.id}`)
-          .set('Authorization', hmac(`DELETE\n/users/${deletee.id}\n${JSON.stringify({})}`, deleter.secret, 'base64'))
+        const url = `/users/${deletee.id}`
+        const response = await request(app).delete(url)
+          .set('Authorization', authorizationFor(deleter, 'DELETE', url))
         expect(response).to.have.status(401)
       })
 
       it('does not delete other users', () => {
         const deleter = givenUser
         const deletee = givenUser2
-        const req = () => request(app).delete(`/users/${deletee.id}`)
-          .set('Authorization', hmac(`DELETE\n/users/${deletee.id}\n${JSON.stringify({})}`, deleter.secret, 'base64'))
+        const url = `/users/${deletee.id}`
+        const req = () => request(app).delete(url)
+          .set('Authorization', authorizationFor(deleter, 'DELETE', url))
         return expect(req).to.alter(() => User.count(), { by:  0 })
       })
 
       it('returns status 401 (Unauthorized) when trying to delete a non-existent user', async () => {
         const nonExistentId = givenUser2.id + 1
-        const existentSecret = givenUser2.secret
-        const response = await request(app).delete(`/users/${nonExistentId}`)
-          .set('Authorization', hmac(`DELETE\n/users/${nonExistentId}\n${JSON.stringify({})}`, existentSecret, 'base64'))
+        const existentUser = givenUser2
+        const url = `/users/${nonExistentId}`
+        const response = await request(app).delete(url)
+          .set('Authorization', authorizationFor(existentUser, 'DELETE', url))
         expect(response).to.have.status(401)
       })
 
       it('does not delete a random user when trying to delete a non-existent user', () => {
         const nonExistentId = givenUser2.id + 1
-        const existentSecret = givenUser2.secret
-        const req = () => request(app).delete(`/users/${nonExistentId}`)
-        .set('Authorization', hmac(`DELETE\n/users/${nonExistentId}\n${JSON.stringify({})}`, existentSecret, 'base64'))
+        const existentUser = givenUser2
+        const url = `/users/${nonExistentId}`
+        const req = () => request(app).delete(url)
+          .set('Authorization', authorizationFor(existentUser, 'DELETE', url))
         return expect(req).to.alter(() => User.count(), { by:  0 })
       })
     })
@@ -294,4 +305,3 @@ describe('/users', () => {
 
 // TODO: test routes when database is unreachable, it should return a nice descriptive 500 Internal Server Error
 // TODO: use spies/stubs/mocks/whatever to test if authMiddleware is called and other stuff.
-// TODO: an helper to sign requests

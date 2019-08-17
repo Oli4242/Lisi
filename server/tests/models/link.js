@@ -104,8 +104,11 @@ describe('Link', () => {
       })
 
       after(async () => {
-        await Link.truncate({ cascade: true })
         await User.truncate({ cascade: true })
+      })
+
+      afterEach(async () => {
+        await Link.truncate({ cascade: true })
       })
 
       it('is valid', () => {
@@ -123,7 +126,7 @@ describe('Link', () => {
         }).to.alter(() => Link.count(), { by: 1 })
       })
 
-      it('uniqueness?')
+      it('uniqueness?') // TODO:
 
       it('is valid with a null note', () => {
         return expect(async () => {
@@ -222,6 +225,50 @@ describe('Link', () => {
         })
         return expect(invalidLink.validate()).to.not.be.fulfilled
       })
+    })
+  })
+
+  describe('unique constraint on userId/url', () => {
+    let givenUser, givenUser2, givenLink
+
+    before(async () => {
+      givenUser = await User.create({
+        username: 'Bob',
+        password: '12345678'
+      })
+      givenUser2 = await User.create({
+        username: 'Bobby',
+        password: 'abcdefgh'
+      })
+      givenLink = await givenUser2.createLink({
+        url: 'http://example.com',
+        note: 'blabla bla\nbla bla.',
+        title: 'a title'
+      })
+    })
+
+    after(async () => {
+      await User.truncate({ cascade: true })
+      await Link.truncate({ cascade: true })
+    })
+
+    it('allows links with the same url from diffrent owners', () => {
+      const validLink = givenUser.createLink({
+        url: givenLink.url,
+        note: 'something different',
+        title: 'something different'
+      })
+      return expect(validLink).to.be.fulfilled
+    })
+
+    it('disallows multiple links with the both same url and the same owner', () => {
+      const invalidLink = Link.create({
+        url: givenLink.url,
+        userId: givenLink.userId,
+        note: 'something different',
+        title: 'something different'
+      })
+      return expect(invalidLink).to.not.be.fulfilled
     })
   })
 

@@ -2,7 +2,7 @@
 
 module.exports = {
   up: (queryInterface, Sequelize) => {
-    return queryInterface.addIndex('links', { // TODO: test this in the model. And maybe simplify the test of the route.
+    return queryInterface.addIndex('links', {
       unique: true,
       fields: ['userId', 'url']
     })

@@ -13,5 +13,5 @@ describe('Lisi server', () => {
   require('./models/link')
   require('./utils/auth-middleware')
   require('./routes/users')
-  // require('./routes/links')
+  require('./routes/links')
 })

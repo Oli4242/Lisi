@@ -22,4 +22,15 @@ router.post('/', authMiddleware, async (req, res) => {
   }
 })
 
+router.get('/', authMiddleware, async (req, res) => {
+  const links = await res.locals.currentUser.getLinks()
+  const linksArray = links.map(link => ({
+    id: link.id,
+    url: link.url,
+    note: link.note,
+    title: link.title
+  }))
+  res.status(200).send({ links: linksArray })
+})
+
 module.exports = router

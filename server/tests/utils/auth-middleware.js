@@ -99,3 +99,5 @@ describe('testApp', () => {
     })
   })
 })
+
+// TODO: test if it uses correctly `res.locals.userId` when set.

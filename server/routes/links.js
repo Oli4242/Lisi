@@ -1,8 +1,9 @@
 const router = require('express').Router()
+const authMiddleware = require('../utils/auth-middleware')
 const errorToResponse = require('../utils/error-to-response')
 const Sequelize = require('sequelize')
 
-router.post('/', async (req, res) => {
+router.post('/', authMiddleware, async (req, res) => {
   try {
     await res.locals.currentUser.createLink({
       url: req.body.url,

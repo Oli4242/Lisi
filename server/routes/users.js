@@ -6,6 +6,15 @@ const { User } = require('../models')
 const errorToResponse = require('../utils/error-to-response')
 const authMiddleware = require('../utils/auth-middleware')
 
+// Saves req.params.userId in res.locals.userId
+// because req.params isn't alawys available, example:
+// users.use('/:userId/links', links)
+// req.params.userId isn't available from within links subroute
+router.param('userId', (req, res, next, userId) => { // TODO: test this behavior
+  res.locals.userId = userId
+  next()
+})
+
 router.get('/', (req, res) => res.sendStatus(405)) // Method Not Allowed
 
 router.post('/', async (req, res) => {

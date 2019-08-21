@@ -8,11 +8,7 @@ module.exports = async (req, res, next) => {
     return res.sendStatus(401)
   }
 
-  // TODO: find a more elegant way to write this. I don't like the fact it relies on the route's params name.
-  // ... and the fact it is tied to the db and model layer.
-  // ... it could be as simple as using a "pre-auth middleware" that would set some values in res.locals before calling next()
-  // ... or something :)
-  const user = await User.findByPk(req.params.userId || null)
+  const user = await User.findByPk(req.params.userId || res.locals.userId || null)
   if (!user) {
     return res.sendStatus(401) // Unauthorized
   }

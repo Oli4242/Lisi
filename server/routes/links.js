@@ -2,6 +2,7 @@ const router = require('express').Router()
 const authMiddleware = require('../utils/auth-middleware')
 const errorToResponse = require('../utils/error-to-response')
 const Sequelize = require('sequelize')
+const { Link } = require('../models')
 
 router.post('/', authMiddleware, async (req, res) => {
   try {
@@ -31,6 +32,17 @@ router.get('/', authMiddleware, async (req, res) => {
     title: link.title
   }))
   res.status(200).send({ links: linksArray })
+})
+
+router.get('/:linkId', authMiddleware, async (req, res) => {
+  const link = await Link.findByPk(req.params.linkId)
+
+  if (!link || link.userId !== res.locals.currentUser.id) {
+    res.sendStatus(404)
+  } else {
+    const { id, url, note, title } = link
+    res.status(200).send({ id, url, note, title })
+  }
 })
 
 module.exports = router

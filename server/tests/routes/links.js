@@ -169,7 +169,7 @@ describe('/user/:id/links', () => {
     })
   })
 
-  describe('GET user/:id/links', () => { // TODO: pagination
+  describe('GET /user/:id/links', () => { // TODO: pagination
     let givenUser, givenUser2, givenLinks
 
     before(async () => {
@@ -253,9 +253,103 @@ describe('/user/:id/links', () => {
     })
   })
 
-  describe('GET links/:id', () => {
-    context('on happy path', pending)
-    context('on sad path', pending)
+  describe('GET /users/:id/links/:id', () => {
+    let givenUser, givenUser2, givenLink
+
+    before(async () => {
+      givenUser = await User.create({
+        username: 'Bob',
+        password: '12345678'
+      })
+      givenUser2 = await User.create({
+        username: 'Bobby',
+        password: 'abcdefgh'
+      })
+      givenLink = await givenUser.createLink({
+        url: 'http://example.com/given/link',
+        title: 'a title',
+        note: 'a note'
+      })
+    })
+
+    after(async () => {
+      await User.truncate()
+      await Link.truncate()
+    })
+
+    context('on happy path', () => {
+      it('returns status 200 (OK)', async() => {
+        const url = `/users/${givenUser.id}/links/${givenLink.id}`
+        const response = await request(app).get(url)
+          .set('Authorization', authorizationFor(givenUser, 'GET', url))
+        expect(response).to.have.status(200)
+      })
+
+      it('returns the desired link as json', async () => {
+        const url = `/users/${givenUser.id}/links/${givenLink.id}`
+        const response = await request(app).get(url)
+          .set('Authorization', authorizationFor(givenUser, 'GET', url))
+        expect(response.body).to.deep.eql({ // TODO: add date and maybe userId/owner ?
+          id: givenLink.id,
+          url: givenLink.url,
+          note: givenLink.note,
+          title: givenLink.title,
+        })
+      })
+    })
+
+    context('on sad path', () => {
+      it('returns status 404 (Not Found) when the link does not exist', async () => {
+        const nonExistingLinkId = givenLink.id + 1
+        const url = `/users/${givenUser.id}/links/${nonExistingLinkId}`
+        const response = await request(app).get(url)
+          .set('Authorization', authorizationFor(givenUser, 'GET', url))
+        expect(response).to.have.status(404)
+      })
+
+      it('answers with an empty response on error 404 (Not Found)', async () => {
+        const nonExistingLinkId = givenLink.id + 1
+        const url = `/users/${givenUser.id}/links/${nonExistingLinkId}`
+        const response = await request(app).get(url)
+          .set('Authorization', authorizationFor(givenUser, 'GET', url))
+        expect(response.body).to.eql({})
+      })
+
+      it('returns status 401 (Unauthorized) when trying to access another userId', async () => {
+        const url = `/users/${givenUser.id}/links/${givenLink.id}`
+        const response = await request(app).get(url)
+          .set('Authorization', authorizationFor(givenUser2, 'GET', url))
+        expect(response).to.have.status(401)
+      })
+
+      it('returns status 401 (Unauthorized) when trying to access another userId even if the linkId does not exist', async () => {
+        const nonExistingLinkId = givenLink.id + 1
+        const url = `/users/${givenUser.id}/links/${nonExistingLinkId}`
+        const response = await request(app).get(url)
+          .set('Authorization', authorizationFor(givenUser2, 'GET', url))
+        expect(response).to.have.status(401)
+      })
+
+      it('returns status 404 (Not Found) when trying to access a linkId owned by someone else', async () => { // It must give no information about other user's links
+        const url = `/users/${givenUser2.id}/links/${givenLink.id}`
+        const response = await request(app).get(url)
+          .set('Authorization', authorizationFor(givenUser2, 'GET', url))
+        expect(response).to.have.status(404)
+      })
+
+      it('answers with an empty response on error 401 (Unauthorized)', async () => {
+        const url = `/users/${givenUser2.id}/links/${givenLink.id}`
+        const response = await request(app).get(url)
+          .set('Authorization', authorizationFor(givenUser2, 'GET', url))
+        expect(response.body).to.eql({})
+      })
+
+      it('requires authentication', async () => {
+        const url = `/users/${givenUser.id}/links/${givenLink.id}`
+        const response = await request(app).get(url)
+        expect(response).to.have.status(401)
+      })
+    })
   })
 
   // TODO:

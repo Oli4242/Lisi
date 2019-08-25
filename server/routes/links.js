@@ -36,12 +36,25 @@ router.get('/', authMiddleware, async (req, res) => {
 
 router.get('/:linkId', authMiddleware, async (req, res) => {
   const link = await Link.findByPk(req.params.linkId)
+  const currentUserId = res.locals.currentUser.id
 
-  if (!link || link.userId !== res.locals.currentUser.id) {
+  if (!link || link.userId !== currentUserId) { // the current user must know only about its own links so we return error 404 if the linkId exists but belongs to someone else
     res.sendStatus(404)
   } else {
     const { id, url, note, title } = link
     res.status(200).send({ id, url, note, title })
+  }
+})
+
+router.delete('/:linkId', authMiddleware, async (req, res) => {
+  const link = await Link.findByPk(req.params.linkId)
+  const currentUserId = res.locals.currentUser.id
+
+  if (!link || link.userId !== currentUserId) {
+    res.sendStatus(404)
+  } else {
+    await link.destroy()
+    res.sendStatus(200)
   }
 })
 

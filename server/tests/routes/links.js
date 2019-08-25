@@ -352,9 +352,102 @@ describe('/user/:id/links', () => {
     })
   })
 
-  // TODO:
-  describe('PATCH links/:id', pending)
-  describe('DELETE links/:id', pending)
+  describe('PATCH /users/:id/links/:id', () => { // TODO:
+    context('on happy path', pending)
+    context('on sad path', pending)
+  })
+
+  describe('DELETE /users/:id/links/:id', () => {
+    let givenUser, givenUser2, givenLink
+
+    before(async () => {
+      givenUser = await User.create({
+        username: 'Bob',
+        password: '12345678'
+      })
+      givenUser2 = await User.create({
+        username: 'Bobby',
+        password: 'abcdefgh'
+      })
+    })
+
+    after(async () => {
+      await User.truncate()
+    })
+
+    beforeEach(async () => {
+      givenLink = await givenUser.createLink({
+        url: 'http://example.com/given/link',
+        title: 'a title',
+        note: 'a note'
+      })
+    })
+
+    afterEach(async () => {
+      await Link.truncate()
+    })
+
+    context('on happy path', () => {
+      it('returns status 200 (OK)', async () => {
+        const url = `/users/${givenUser.id}/links/${givenLink.id}`
+        const response = await request(app).delete(url)
+          .set('Authorization', authorizationFor(givenUser, 'DELETE', url))
+        expect(response).to.have.status(200)
+      })
+
+      it('deletes the link', () => {
+        const url = `/users/${givenUser.id}/links/${givenLink.id}`
+        const req = () => request(app).delete(url)
+          .set('Authorization', authorizationFor(givenUser, 'DELETE', url))
+        return expect(req).to.alter(() => Link.count(), { by: -1 })
+      })
+    })
+
+    context('on sad path', () => {
+      it('returns status 404 (Not Found) when the link does not exists', async () => {
+        const nonExistingLinkId = givenLink.id + 1
+        const url = `/users/${givenUser.id}/links/${nonExistingLinkId}`
+        const response = await request(app).delete(url)
+          .set('Authorization', authorizationFor(givenUser, 'DELETE', url))
+        expect(response).to.have.status(404)
+      })
+
+      it('returns status 404 (Not Found) when the link exists but is owned by someone else', async () => {
+        const url = `/users/${givenUser2.id}/links/${givenLink.id}`
+        const response = await request(app).delete(url)
+          .set('Authorization', authorizationFor(givenUser2, 'DELETE', url))
+        expect(response).to.have.status(404)
+      })
+
+      it('deletes nothing on 404 (Not Found) error', () => {
+        const url = `/users/${givenUser2.id}/links/${givenLink.id}`
+        const req = () => request(app).delete(url)
+          .set('Authorization', authorizationFor(givenUser2, 'DELETE', url))
+        return expect(req).to.alter(() => Link.count(), { by: 0 })
+      })
+
+      it('returns status 401 (Unauthorized) when trying to delete someone else\'s link', async () => {
+        const url = `/users/${givenUser.id}/links/${givenLink.id}`
+        const response = await request(app).delete(url)
+          .set('Authorization', authorizationFor(givenUser2, 'DELETE', url))
+        expect(response).to.have.status(401)
+      })
+
+      it('does not delete other\'s links', () => {
+        const url = `/users/${givenUser.id}/links/${givenLink.id}`
+        const req = () => request(app).delete(url)
+          .set('Authorization', authorizationFor(givenUser2, 'DELETE', url))
+        return expect(req).to.alter(() => Link.count(), { by: 0 })
+      })
+
+      it('requires authentication', () => {
+        const url = `/users/${givenUser.id}/links/${givenLink.id}`
+        const req = () => request(app).delete(url)
+        return expect(req).to.alter(() => Link.count(), { by: 0 })
+      })
+    })
+  })
+
   // TODO: search links by url/name/note/title/date
   // TODO: count
 })

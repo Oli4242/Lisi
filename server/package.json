@@ -22,7 +22,7 @@
     "rimraf": "^2.6.3"
   },
   "dependencies": {
-    "bcrypt": "^3.0.4",
+    "bcrypt": "^5.0.0",
     "buffer-equal-constant-time": "^1.0.1",
     "express": "^4.16.4",
     "is-bcrypt": "^0.3.1",
